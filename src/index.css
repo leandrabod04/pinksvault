@@ -4,20 +4,8 @@
   padding: 0;
 }
 
-:root {
-  --pink: #f72585;
-  --pink-light: #ff85b3;
-  --pink-dark: #c9184a;
-  --bg: #0d0d0d;
-  --surface: #1a1a2e;
-  --surface-alt: #16213e;
-  --text: #f0f0f0;
-  --text-muted: #aaaaaa;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-}
-
 body {
-  min-height: 100vh;
+  background: #fff;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
 }

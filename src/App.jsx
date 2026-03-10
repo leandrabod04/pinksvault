@@ -1,47 +1,61 @@
 import './App.css'
 
+const features = [
+  {
+    icon: '🔐',
+    title: 'User Authentication',
+    description: 'Create an account and log in to keep your data saved across sessions.',
+  },
+  {
+    icon: '🏆',
+    title: 'Personal Song Rankings',
+    description: 'Rank PinkPantheress songs however you like and build your own tier list.',
+  },
+  {
+    icon: '♡',
+    title: 'Favorite Songs List',
+    description: 'Save the tracks you love most to your personal favorites vault.',
+  },
+  {
+    icon: '✍',
+    title: 'Song Reviews',
+    description: 'Write short reviews on any song and share your thoughts with the community.',
+  },
+  {
+    icon: '🌐',
+    title: 'Community Rankings',
+    description: 'See how other fans are ranking songs and discover new favorites.',
+  },
+]
+
 function App() {
   return (
-    <div className="landing">
+    <div className="page">
       <header className="hero">
-        <div className="hero-content">
-          <h1 className="logo-title">PinksVault</h1>
-          <p className="tagline">Your personal archive for all things PinkPantheress</p>
-          <div className="cta-buttons">
-            <button className="btn-primary">Create Account</button>
-            <button className="btn-secondary">Explore</button>
-          </div>
-        </div>
+        <h1>PinksVault</h1>
+        <p className="description">
+          PinksVault is a web app where PinkPantheress fans can rank their favorite songs,
+          save favorites, and write short reviews.
+        </p>
       </header>
 
-      <section className="features">
-        <h2>What you can do</h2>
-        <div className="feature-grid">
-          <div className="feature-card">
-            <span className="feature-icon">★</span>
-            <h3>Rank Songs</h3>
-            <p>Build your personal tier list across all of PinkPantheress's discography.</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">♡</span>
-            <h3>Save Favorites</h3>
-            <p>Bookmark the tracks you keep on repeat to your personal vault.</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">✍</span>
-            <h3>Leave Reviews</h3>
-            <p>Drop short takes on songs and see what other fans think.</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">👤</span>
-            <h3>Your Profile</h3>
-            <p>Create an account and keep all your rankings and reviews in one place.</p>
-          </div>
-        </div>
-      </section>
+      <main className="features">
+        <h2>Features</h2>
+        <ul className="feature-list">
+          {features.map((f) => (
+            <li key={f.title} className="feature-item">
+              <span className="feature-icon">{f.icon}</span>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </main>
 
-      <footer className="footer">
-        <p>PinksVault &mdash; Made for fans, by fans &hearts;</p>
+      <footer>
+        <p>PinksVault &mdash; made for fans, by fans</p>
       </footer>
     </div>
   )
