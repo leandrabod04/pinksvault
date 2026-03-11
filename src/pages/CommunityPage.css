@@ -1,0 +1,164 @@
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.community-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.community-meta {
+  font-size: 0.85rem;
+}
+
+.community-method {
+  font-size: 0.78rem;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* ── Leaderboard list ────────────────────────────────────────────────────── */
+.community-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.community-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+
+.community-item:hover {
+  border-color: var(--pink-dark);
+}
+
+/* ── Rank number ─────────────────────────────────────────────────────────── */
+.community-rank {
+  font-size: 0.85rem;
+  font-weight: 800;
+  width: 2.2rem;
+  flex-shrink: 0;
+  text-align: center;
+  color: var(--pink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Album art ───────────────────────────────────────────────────────────── */
+.community-art {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.community-art-initial {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.2);
+  user-select: none;
+}
+
+/* ── Song info + score bar ───────────────────────────────────────────────── */
+.community-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.community-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.community-album {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score-bar-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 0.2rem;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: var(--pink);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* ── Fan count ───────────────────────────────────────────────────────────── */
+.community-stats {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 2.5rem;
+}
+
+.community-fans {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.community-fans-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.community-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.community-empty-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.community-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}

@@ -1,0 +1,35 @@
+.fav-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+/* Reuse the same grid defined in HomePage.css */
+.song-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.fav-empty {
+  margin-top: 4rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fav-empty-icon {
+  font-size: 3rem;
+  color: var(--border);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.fav-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}

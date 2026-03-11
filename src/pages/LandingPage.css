@@ -1,0 +1,56 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  /* Subtle radial glow behind the title */
+  background: radial-gradient(ellipse 60% 40% at 50% 45%, #2a0514 0%, var(--bg) 70%);
+}
+
+.landing-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.landing-title {
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  font-weight: 800;
+  color: var(--pink);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 1.25rem;
+}
+
+.landing-tagline {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 420px;
+  margin-bottom: 2.25rem;
+}
+
+.landing-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.landing-btn {
+  padding: 0.7rem 1.75rem;
+  font-size: 0.95rem;
+}
+
+.landing-footer {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  padding-bottom: 1rem;
+}

@@ -1,64 +1,62 @@
-import './App.css'
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import { FavoritesProvider } from './context/FavoritesContext'
+import { RankingsProvider } from './context/RankingsContext'
+import { ReviewsProvider }  from './context/ReviewsContext'
+import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
+import LandingPage    from './pages/LandingPage'
+import LoginPage      from './pages/LoginPage'
+import SignupPage     from './pages/SignupPage'
+import HomePage       from './pages/HomePage'
+import RankingsPage   from './pages/RankingsPage'
+import FavoritesPage  from './pages/FavoritesPage'
+import ReviewsPage    from './pages/ReviewsPage'
+import CommunityPage  from './pages/CommunityPage'
+import ProfilePage    from './pages/ProfilePage'
 
-const features = [
-  {
-    icon: '🔐',
-    title: 'User Authentication',
-    description: 'Create an account and log in to keep your data saved across sessions.',
-  },
-  {
-    icon: '🏆',
-    title: 'Personal Song Rankings',
-    description: 'Rank PinkPantheress songs however you like and build your own tier list.',
-  },
-  {
-    icon: '♡',
-    title: 'Favorite Songs List',
-    description: 'Save the tracks you love most to your personal favorites vault.',
-  },
-  {
-    icon: '✍',
-    title: 'Song Reviews',
-    description: 'Write short reviews on any song and share your thoughts with the community.',
-  },
-  {
-    icon: '🌐',
-    title: 'Community Rankings',
-    description: 'See how other fans are ranking songs and discover new favorites.',
-  },
-]
-
-function App() {
+function AppLayout() {
   return (
-    <div className="page">
-      <header className="hero">
-        <h1>PinksVault</h1>
-        <p className="description">
-          PinksVault is a web app where PinkPantheress fans can rank their favorite songs,
-          save favorites, and write short reviews.
-        </p>
-      </header>
-
-      <main className="features">
-        <h2>Features</h2>
-        <ul className="feature-list">
-          {features.map((f) => (
-            <li key={f.title} className="feature-item">
-              <span className="feature-icon">{f.icon}</span>
-              <div>
-                <h3>{f.title}</h3>
-                <p>{f.description}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </main>
-
-      <footer>
-        <p>PinksVault &mdash; made for fans, by fans</p>
-      </footer>
-    </div>
+    <>
+      <Navbar />
+      <Outlet />
+    </>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <FavoritesProvider>
+        <RankingsProvider>
+        <ReviewsProvider>
+        <Routes>
+          {/* Public — standalone, no navbar */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* Public — navbar, no auth required */}
+          <Route element={<AppLayout />}>
+            <Route path="/login"     element={<LoginPage />} />
+            <Route path="/signup"    element={<SignupPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+          </Route>
+
+          {/* Protected — navbar + must be logged in */}
+          <Route element={<AppLayout />}>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/home"      element={<HomePage />} />
+              <Route path="/rankings"  element={<RankingsPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/reviews"   element={<ReviewsPage />} />
+              <Route path="/profile"   element={<ProfilePage />} />
+            </Route>
+          </Route>
+        </Routes>
+        </ReviewsProvider>
+        </RankingsProvider>
+        </FavoritesProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  )
+}
