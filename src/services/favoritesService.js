@@ -1,51 +1,70 @@
-// favoritesService.js — Phase 1: localStorage implementation
+// favoritesService.js — Phase 2: Supabase implementation
 //
-// Return shape matches the Supabase pattern: { data, error }
-// Phase 2 swap: replace each function body with a supabase.from('favorites') query.
-// The function signatures and return shapes must not change.
+// Function signatures and return shapes are identical to the Phase 1
+// localStorage version so FavoritesContext needs no changes.
 //
-// Storage: pv_favorites → { [userId]: [songId, songId, ...] }
+// Return shape: { data: { favorites: string[] } | null, error: { message } | null }
+// favorites is always a flat array of songId strings.
 
-const FAVORITES_KEY = 'pv_favorites'
+import { supabase } from '../lib/supabase'
 
-function readAll() {
-  return JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '{}')
+// ─── helper ───────────────────────────────────────────────────────────────────
+// Fetches the current favorites list for a user and returns it in the
+// expected shape. Called internally after every mutation so the context
+// always receives a fresh, authoritative array.
+
+async function fetchFavorites(userId) {
+  const { data, error } = await supabase
+    .from('favorites')
+    .select('song_id')
+    .eq('user_id', userId)
+
+  if (error) return { data: null, error: { message: error.message } }
+
+  const favorites = data.map((row) => row.song_id)
+  return { data: { favorites }, error: null }
 }
 
-function writeAll(all) {
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(all))
-}
+// ─── public API ───────────────────────────────────────────────────────────────
 
 /**
  * Get all favorited song IDs for a user.
  * @returns {{ data: { favorites: string[] }, error: null }}
  */
 export async function getFavorites(userId) {
-  const all = readAll()
-  return { data: { favorites: all[userId] ?? [] }, error: null }
+  return fetchFavorites(userId)
 }
 
 /**
- * Add a song to the user's favorites. Silently ignores duplicates.
- * @returns {{ data: { favorites: string[] }, error: null }}
+ * Add a song to the user's favorites.
+ * Uses ignoreDuplicates so calling it on an already-favorited song is a no-op.
+ * @returns {{ data: { favorites: string[] } | null, error: { message } | null }}
  */
 export async function addFavorite(userId, songId) {
-  const all     = readAll()
-  const current = all[userId] ?? []
-  if (!current.includes(songId)) {
-    all[userId] = [...current, songId]
-    writeAll(all)
-  }
-  return { data: { favorites: all[userId] }, error: null }
+  const { error } = await supabase
+    .from('favorites')
+    .upsert(
+      { user_id: userId, song_id: songId },
+      { onConflict: 'user_id,song_id', ignoreDuplicates: true }
+    )
+
+  if (error) return { data: null, error: { message: error.message } }
+
+  return fetchFavorites(userId)
 }
 
 /**
  * Remove a song from the user's favorites.
- * @returns {{ data: { favorites: string[] }, error: null }}
+ * @returns {{ data: { favorites: string[] } | null, error: { message } | null }}
  */
 export async function removeFavorite(userId, songId) {
-  const all = readAll()
-  all[userId] = (all[userId] ?? []).filter((id) => id !== songId)
-  writeAll(all)
-  return { data: { favorites: all[userId] }, error: null }
+  const { error } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', userId)
+    .eq('song_id', songId)
+
+  if (error) return { data: null, error: { message: error.message } }
+
+  return fetchFavorites(userId)
 }

@@ -1,105 +1,120 @@
-// reviewsService.js — Phase 1: localStorage implementation
+// reviewsService.js — Phase 2: Supabase implementation
 //
-// Return shape matches the Supabase pattern: { data, error }
-// Phase 2 swap: replace each function body with supabase.from('reviews') queries.
-//   getReviews        → SELECT * FROM reviews ORDER BY created_at DESC
-//   getReviewsForSong → SELECT * FROM reviews WHERE song_id = ?
-//   addReview         → INSERT INTO reviews (...)
-//   updateReview      → UPDATE reviews SET ... WHERE id = ? AND user_id = ?
-//   deleteReview      → DELETE FROM reviews WHERE id = ? AND user_id = ?
-// The function signatures and return shapes must not change.
+// Function signatures and return shapes are identical to the Phase 1
+// localStorage version so ReviewsContext and ReviewsPage need no changes.
 //
-// Storage: pv_reviews → Review[]
-// Review shape: { id, userId, username, songId, rating, body, createdAt, updatedAt }
+// Review shape the rest of the app expects (camelCase):
+//   { id, userId, username, songId, rating, body, createdAt, updatedAt }
+//
+// Supabase returns snake_case columns — normalizeReview() maps them before
+// anything leaves this file.
+//
+// Ownership is enforced at two levels:
+//   1. RLS policies on the reviews table (server-enforced)
+//   2. .eq('user_id', userId) filter on UPDATE/DELETE (belt-and-suspenders)
 
-const REVIEWS_KEY = 'pv_reviews'
+import { supabase } from '../lib/supabase'
 
-function readAll() {
-  return JSON.parse(localStorage.getItem(REVIEWS_KEY) ?? '[]')
+// ─── helper ───────────────────────────────────────────────────────────────────
+
+function normalizeReview(row) {
+  return {
+    id:        row.id,
+    userId:    row.user_id,
+    username:  row.username,
+    songId:    row.song_id,
+    rating:    row.rating,
+    body:      row.body ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
 }
 
-function writeAll(reviews) {
-  localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews))
-}
+// ─── public API ───────────────────────────────────────────────────────────────
 
 /**
- * Get every review across all songs (used by Community page).
+ * Get every review across all songs, newest first.
+ * Called once on ReviewsProvider mount — publicly readable via RLS.
  * @returns {{ data: { reviews: Review[] }, error: null }}
  */
 export async function getReviews() {
-  return { data: { reviews: readAll() }, error: null }
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) return { data: null, error: { message: error.message } }
+
+  return { data: { reviews: data.map(normalizeReview) }, error: null }
 }
 
 /**
- * Get all reviews for a single song, newest first.
- * @returns {{ data: { reviews: Review[] }, error: null }}
- */
-export async function getReviewsForSong(songId) {
-  const reviews = readAll()
-    .filter((r) => r.songId === songId)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  return { data: { reviews }, error: null }
-}
-
-/**
- * Add a new review. One review per user per song is enforced.
- * @returns {{ data: { review: Review } | null, error: { message: string } | null }}
+ * Add a new review.
+ * The unique(user_id, song_id) constraint enforces one review per user per song.
+ * A Postgres error code 23505 (unique violation) is translated to a
+ * user-friendly message instead of surfacing the raw DB error.
+ * @returns {{ data: { review: Review } | null, error: { message } | null }}
  */
 export async function addReview(userId, username, songId, rating, body) {
-  const all = readAll()
-  const existing = all.find((r) => r.userId === userId && r.songId === songId)
-  if (existing) {
-    return { data: null, error: { message: 'You have already reviewed this song.' } }
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert({
+      user_id:  userId,
+      username,
+      song_id:  songId,
+      rating,
+      body:     body.trim(),
+    })
+    .select()
+    .single()
+
+  if (error) {
+    const message = error.code === '23505'
+      ? 'You have already reviewed this song.'
+      : error.message
+    return { data: null, error: { message } }
   }
 
-  const review = {
-    id:        crypto.randomUUID(),
-    userId,
-    username,
-    songId,
-    rating,
-    body:      body.trim(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }
-  writeAll([...all, review])
-  return { data: { review }, error: null }
+  return { data: { review: normalizeReview(data) }, error: null }
 }
 
 /**
- * Update rating and/or body of an existing review.
- * Ownership is enforced — only the review's author can update it.
- * @returns {{ data: { review: Review } | null, error: { message: string } | null }}
+ * Update an existing review's rating and body.
+ * Ownership enforced by both RLS and the user_id filter.
+ * updated_at is set explicitly because the table has no auto-update trigger.
+ * @returns {{ data: { review: Review } | null, error: { message } | null }}
  */
 export async function updateReview(reviewId, userId, rating, body) {
-  const all = readAll()
-  const idx = all.findIndex((r) => r.id === reviewId)
+  const { data, error } = await supabase
+    .from('reviews')
+    .update({
+      rating,
+      body:       body.trim(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id',      reviewId)
+    .eq('user_id', userId)
+    .select()
+    .single()
 
-  if (idx === -1) return { data: null, error: { message: 'Review not found.' } }
-  if (all[idx].userId !== userId) return { data: null, error: { message: 'Not authorised.' } }
+  if (error) return { data: null, error: { message: error.message } }
 
-  const updated = {
-    ...all[idx],
-    rating,
-    body:      body.trim(),
-    updatedAt: new Date().toISOString(),
-  }
-  all[idx] = updated
-  writeAll(all)
-  return { data: { review: updated }, error: null }
+  return { data: { review: normalizeReview(data) }, error: null }
 }
 
 /**
- * Delete a review. Ownership is enforced.
- * @returns {{ data: null, error: { message: string } | null }}
+ * Delete a review.
+ * Ownership enforced by both RLS and the user_id filter.
+ * @returns {{ data: null, error: { message } | null }}
  */
 export async function deleteReview(reviewId, userId) {
-  const all = readAll()
-  const target = all.find((r) => r.id === reviewId)
+  const { error } = await supabase
+    .from('reviews')
+    .delete()
+    .eq('id',      reviewId)
+    .eq('user_id', userId)
 
-  if (!target)                    return { data: null, error: { message: 'Review not found.' } }
-  if (target.userId !== userId)   return { data: null, error: { message: 'Not authorised.' } }
+  if (error) return { data: null, error: { message: error.message } }
 
-  writeAll(all.filter((r) => r.id !== reviewId))
   return { data: null, error: null }
 }

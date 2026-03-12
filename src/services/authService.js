@@ -1,94 +1,90 @@
-// authService.js — Phase 1: localStorage implementation
+// authService.js — Phase 2: Supabase Auth implementation
 //
-// All functions return { data, error } to match the Supabase client shape.
-// When upgrading to Supabase (Phase 2), replace the bodies of these functions
-// with supabase.auth calls — the signatures and return shapes stay identical.
+// Function signatures and return shapes are identical to the Phase 1
+// localStorage version so AuthContext and all UI code need no changes.
 //
-// Storage keys
-const USERS_KEY   = 'pv_users'
-const SESSION_KEY = 'pv_session'
+// Return shape: { data: { user } | null, error: { message } | null }
+// getSession:  { data: { session: { user } | null }, error: null }
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+import { supabase } from '../lib/supabase'
 
-function getUsers() {
-  return JSON.parse(localStorage.getItem(USERS_KEY) ?? '[]')
-}
+// ─── helper ───────────────────────────────────────────────────────────────────
+// Supabase's user object is deeply nested. Flatten it to the shape the
+// rest of the app already expects: { id, username, email, createdAt }
 
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users))
-}
-
-function saveSession(user) {
-  // Never persist the password in the session
-  const { password: _pw, ...safeUser } = user
-  localStorage.setItem(SESSION_KEY, JSON.stringify(safeUser))
-  return safeUser
-}
-
-function clearSession() {
-  localStorage.removeItem(SESSION_KEY)
+function normalizeUser(supabaseUser) {
+  if (!supabaseUser) return null
+  return {
+    id:        supabaseUser.id,
+    email:     supabaseUser.email,
+    username:  supabaseUser.user_metadata?.username ?? '',
+    createdAt: supabaseUser.created_at,
+  }
 }
 
 // ─── public API ───────────────────────────────────────────────────────────────
 
 /**
  * Register a new user.
- * @returns {{ data: { user } | null, error: { message: string } | null }}
+ * username is passed via options.data so the database trigger can insert
+ * a matching row into the profiles table automatically on signup.
+ * @returns {{ data: { user } | null, error: { message } | null }}
  */
 export async function signUp(username, email, password) {
-  const users = getUsers()
-
-  if (users.find((u) => u.email === email)) {
-    return { data: null, error: { message: 'An account with this email already exists.' } }
-  }
-  if (users.find((u) => u.username.toLowerCase() === username.toLowerCase())) {
-    return { data: null, error: { message: 'That username is already taken.' } }
-  }
-
-  const newUser = {
-    id:        crypto.randomUUID(),
-    username,
+  const { data, error } = await supabase.auth.signUp({
     email,
-    password, // plain text — acceptable for local dev; Supabase handles hashing in Phase 2
-    createdAt: new Date().toISOString(),
-  }
+    password,
+    options: {
+      data: { username },
+    },
+  })
 
-  saveUsers([...users, newUser])
-  const user = saveSession(newUser)
+  if (error) return { data: null, error: { message: error.message } }
+
+  // If email confirmation is enabled data.user exists but data.session is null.
+  // For dev (confirmation disabled) both are present immediately.
+  const user = normalizeUser(data.user)
   return { data: { user }, error: null }
 }
 
 /**
  * Log in with email + password.
- * @returns {{ data: { user } | null, error: { message: string } | null }}
+ * @returns {{ data: { user } | null, error: { message } | null }}
  */
 export async function logIn(email, password) {
-  const users = getUsers()
-  const found = users.find((u) => u.email === email && u.password === password)
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
 
-  if (!found) {
-    return { data: null, error: { message: 'Incorrect email or password.' } }
-  }
+  if (error) return { data: null, error: { message: error.message } }
 
-  const user = saveSession(found)
+  const user = normalizeUser(data.user)
   return { data: { user }, error: null }
 }
 
 /**
  * Log out the current user.
- * @returns {{ error: null }}
+ * @returns {{ error: { message } | null }}
  */
 export async function logOut() {
-  clearSession()
-  return { error: null }
+  const { error } = await supabase.auth.signOut()
+  return { error: error ? { message: error.message } : null }
 }
 
 /**
- * Restore the session from storage (called on app load).
+ * Restore the session on app load.
+ * Supabase persists the session in localStorage automatically and refreshes
+ * the JWT in the background, so this works across page reloads.
  * @returns {{ data: { session: { user } | null }, error: null }}
  */
 export async function getSession() {
-  const raw = localStorage.getItem(SESSION_KEY)
-  const user = raw ? JSON.parse(raw) : null
-  return { data: { session: user ? { user } : null }, error: null }
+  const { data, error } = await supabase.auth.getSession()
+
+  if (error || !data.session) {
+    return { data: { session: null }, error: null }
+  }
+
+  const user = normalizeUser(data.session.user)
+  return { data: { session: { user } }, error: null }
 }
