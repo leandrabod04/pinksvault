@@ -20,7 +20,24 @@
 }
 
 body {
-  background: var(--bg);
+  /* Base dark fallback colour (shown before image loads) */
+  background-color: var(--bg);
+  /* Layer 1: subtle film-grain noise texture
+     Layer 2: dark overlay so the image never bleeds through and hurts readability
+     Layer 3: deep crimson glow from top centre
+     Layer 4: deep-blue accent in bottom-right corner
+     Layer 5: the actual background photo, tiled */
+  background-image:
+    url('/bg-noise.svg'),
+    linear-gradient(rgba(10, 10, 10, 0.82), rgba(10, 10, 10, 0.82)),
+    radial-gradient(ellipse 130% 55% at 50% -5%, rgba(139, 26, 47, 0.45) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 45% at 100% 100%, rgba(30, 58, 95, 0.28) 0%, transparent 58%),
+    url('/images/backgrounds/fancy-that-b.jpg');
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 200px 200px, auto, auto, auto, cover;
+  background-position: 0 0, 0 0, center top, right bottom, center center;
+  /* Noise scrolls with content; overlay, gradients, and photo stay fixed */
+  background-attachment: scroll, fixed, fixed, fixed, fixed;
   color: var(--text);
   font-family: 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

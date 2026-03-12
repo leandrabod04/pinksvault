@@ -7,8 +7,8 @@ export default function LandingPage() {
       <main className="landing-center">
         <h1 className="landing-title">PinksVault</h1>
         <p className="landing-tagline">
-          Your personal space for PinkPantheress — rank songs,<br />
-          save favorites, and connect with other fans.
+          Your personal space for all things PinkPantheress.<br />
+          Rank songs, save your favorites, and connect with other fans.
         </p>
         <div className="landing-actions">
           <Link to="/signup" className="btn-primary landing-btn">Get Started</Link>

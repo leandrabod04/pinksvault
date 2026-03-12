@@ -6,8 +6,13 @@
   justify-content: center;
   padding: 2rem 1.5rem;
   text-align: center;
-  /* Subtle radial glow behind the title */
-  background: radial-gradient(ellipse 60% 40% at 50% 45%, #2a0514 0%, var(--bg) 70%);
+  /* GIF background with dark overlay for readability */
+  background-image:
+    linear-gradient(rgba(10, 10, 10, 0.6), rgba(10, 10, 10, 0.6)),
+    url('/images/landing/pink-landing.gif');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .landing-center {
@@ -20,10 +25,11 @@
 }
 
 .landing-title {
+  font-family: 'Kapakana', 'Segoe UI', system-ui, sans-serif;
   font-size: clamp(3rem, 10vw, 5.5rem);
   font-weight: 800;
   color: var(--pink);
-  letter-spacing: -0.03em;
+  letter-spacing: 0.08em;
   line-height: 1;
   margin-bottom: 1.25rem;
 }
