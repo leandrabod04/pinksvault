@@ -1,0 +1,271 @@
+/* ── Two-column layout ───────────────────────────────────────────────────── */
+.reviews-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 680px) {
+  .reviews-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Song picker (left column) ───────────────────────────────────────────── */
+.song-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 76px; /* navbar height + gap */
+  max-height: calc(100vh - 100px);
+}
+
+.song-picker-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.song-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.6rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.song-picker-item:hover {
+  background: var(--surface);
+}
+
+.song-picker-item.selected {
+  background: var(--surface);
+  border-color: var(--pink);
+}
+
+.picker-art {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.picker-info {
+  min-width: 0;
+}
+
+.picker-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker-album {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Review panel (right column) ─────────────────────────────────────────── */
+.reviews-main {
+  min-width: 0;
+}
+
+.review-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.review-panel-song {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.review-panel-art {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-panel-art-initial {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.2);
+}
+
+.review-panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-section-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 1rem 0 0.65rem;
+}
+
+/* ── Review form ─────────────────────────────────────────────────────────── */
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review-form-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.review-rating-label {
+  font-size: 0.82rem;
+}
+
+.review-textarea {
+  resize: vertical;
+  min-height: 90px;
+  font-family: inherit;
+  line-height: 1.55;
+}
+
+.review-form-error {
+  font-size: 0.875rem;
+  color: var(--pink);
+  background: rgba(214, 58, 110, 0.1);
+  border: 1px solid rgba(214, 58, 110, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+}
+
+.review-form-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ── Review card ─────────────────────────────────────────────────────────── */
+.review-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.review-username {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-date {
+  font-size: 0.8rem;
+}
+
+.review-body {
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.review-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.review-action-btn {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.2rem 0;
+  transition: color 0.15s;
+}
+
+.review-action-btn:hover {
+  color: var(--pink);
+}
+
+.review-action-btn--delete:hover {
+  color: var(--red);
+}
+
+/* ── List + empty states ─────────────────────────────────────────────────── */
+.review-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-none {
+  padding: 1.5rem 0;
+  font-style: italic;
+}
+
+.reviews-placeholder {
+  text-align: center;
+  padding: 4rem 2rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.reviews-placeholder-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.reviews-placeholder-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}

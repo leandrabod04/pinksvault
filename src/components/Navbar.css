@@ -1,0 +1,65 @@
+.navbar {
+  height: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  font-family: 'Kapakana', 'Segoe UI', system-ui, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--pink);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+.navbar-brand:hover {
+  color: var(--pink-dark);
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+
+.nav-link.active {
+  color: var(--pink);
+  background: var(--surface-raised);
+}
+
+.nav-btn {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+}

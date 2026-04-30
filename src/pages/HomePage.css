@@ -1,0 +1,59 @@
+.home-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.home-controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.home-search {
+  flex: 1;
+}
+
+.home-filter {
+  width: 160px;
+  flex-shrink: 0;
+  cursor: pointer;
+  /* style the native select to match the dark theme */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+.home-filter option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Responsive song grid */
+.song-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .song-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-controls {
+    flex-direction: column;
+  }
+
+  .home-filter {
+    width: 100%;
+  }
+}
+
+.home-empty {
+  margin-top: 3rem;
+  text-align: center;
+}

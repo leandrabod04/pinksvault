@@ -1,3 +1,18 @@
+:root {
+  --bg:            #0a0a0a;
+  --surface:       #141414;
+  --surface-raised:#1e1e1e;
+  --border:        #2a2a2a;
+  --pink:          #d63a6e;
+  --pink-dark:     #a82a54;
+  --red:           #8b1a2f;
+  --blue:          #1e3a5f;
+  --text:          #f0f0f0;
+  --text-muted:    #888888;
+  --radius:        10px;
+  --radius-sm:     6px;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -5,7 +20,127 @@
 }
 
 body {
-  background: #fff;
-  color: #1a1a1a;
+  /* Base dark fallback colour (shown before image loads) */
+  background-color: var(--bg);
+  /* Layer 1: subtle film-grain noise texture
+     Layer 2: dark overlay so the image never bleeds through and hurts readability
+     Layer 3: deep crimson glow from top centre
+     Layer 4: deep-blue accent in bottom-right corner
+     Layer 5: the actual background photo, tiled */
+  background-image:
+    url('/bg-noise.svg'),
+    linear-gradient(rgba(10, 10, 10, 0.82), rgba(10, 10, 10, 0.82)),
+    radial-gradient(ellipse 130% 55% at 50% -5%, rgba(139, 26, 47, 0.45) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 45% at 100% 100%, rgba(30, 58, 95, 0.28) 0%, transparent 58%),
+    url('/images/backgrounds/fancy-that-b.jpg');
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 200px 200px, auto, auto, auto, cover;
+  background-position: 0 0, 0 0, center top, right bottom, center center;
+  /* Noise scrolls with content; overlay, gradients, and photo stay fixed */
+  background-attachment: scroll, fixed, fixed, fixed, fixed;
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--pink);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--pink-dark);
+}
+
+/* Reusable card surface */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  background: var(--surface-raised);
+  border-color: var(--pink-dark);
+}
+
+/* Reusable primary button */
+.btn-primary {
+  background: var(--pink);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--pink-dark);
+}
+
+/* Reusable ghost button */
+.btn-ghost {
+  background: transparent;
+  color: var(--pink);
+  border: 1px solid var(--pink);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-ghost:hover {
+  background: var(--pink);
+  color: #fff;
+}
+
+/* Reusable text input */
+.input {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--pink);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* App page content wrapper */
+.page-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Muted label text */
+.text-muted {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Section heading */
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pink);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
 }
